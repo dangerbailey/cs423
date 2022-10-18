@@ -138,3 +138,38 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y = None):
     X_ = self.transform(X)
     return X_
+  
+  class PearsonTransformer(BaseEstimator, TransformerMixin):
+  
+  def __init__(self, threshold):
+    self.threshold = threshold
+  
+  def transform(self, X):
+    df = X.copy() #your masked table here - see below
+    abs_df = df.abs()
+
+    masked_cols = df.columns
+    masked_indexes = df.index.values
+
+    masked_df = np.where(abs_df > threshold, True, False)
+    masked_df = pd.DataFrame(masked_df, columns = masked_cols, index = masked_indexes)
+
+    upper_mask = np.triu(masked_df, k=1)
+
+    cors = np.where(upper_mask == True)
+    cors = np.unique(cors[1])
+    correlated_columns = []
+    for col in cors:
+      correlated_columns.append(masked_cols[col])
+    X_ = transformed_df.drop(columns=correlated_columns)
+
+    return X_
+
+
+  def fit(self, X, y=None):
+    print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
+    return X
+
+  def fit_transform(self, X, y = None):
+    X_ = self.transform(X)
+    return X_
