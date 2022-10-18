@@ -139,7 +139,7 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
     X_ = self.transform(X)
     return X_
   
-  class PearsonTransformer(BaseEstimator, TransformerMixin):
+class PearsonTransformer(BaseEstimator, TransformerMixin):
   
   def __init__(self, threshold):
     self.threshold = threshold
