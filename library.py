@@ -173,3 +173,68 @@ class PearsonTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y = None):
     X_ = self.transform(X)
     return X_
+  
+# Helper method for sigma3 transformer
+def compute_3sigma_boundaries(df, column_name):
+  assert isinstance(df, pd.core.frame.DataFrame), f'expected Dataframe but got {type(df)} instead.'
+  assert column_name in df.columns.to_list(), f'unknown column {column_name}'
+  assert all([isinstance(v, (int, float)) for v in df[column_name].to_list()])
+
+  mean = df[column_name].mean()
+  sigma = df[column_name].std()
+  low_bound = mean - 3*sigma
+  high_bound = mean + 3*sigma
+
+  return (low_bound, high_bound)
+
+class Sigma3Transformer(BaseEstimator, TransformerMixin):
+
+  def __init__(self, column):
+    self.column = column
+
+  def transform(self, X):
+    X_ = X.copy()
+    (lowb, highb) = compute_3sigma_boundaries(X_, self.column)
+    X_[(self.column)] = X_[self.column].clip(lower = lowb, upper = highb)
+    return X_
+
+  def fit(self, X, y=None):
+    print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
+    return X
+
+  def fit_transform(self, X, y=None):
+    X_ = self.transform(X)
+    return X_
+
+class TukeyTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self, column, action):
+    self.column = column
+    assert action in ['inner', 'outer'], f'{self.__class__.__name__} action {action} not in ["inner", "outer"]'
+    self.action = action
+
+  def transform(self, X):
+    X_ = X.copy()
+    q1 = X_[self.column].quantile(0.25)
+    q3 = X_[self.column].quantile(0.75)
+    iqr = q3-q1
+
+
+    if self.action == 'inner':
+      high_fence = q3+1.5*iqr
+      low_fence = q1-1.5*iqr
+    else:
+      high_fence = q3+3*iqr
+      low_fence = q1-3*iqr
+      
+    print(f'{self.action}: high fence: {high_fence}, low fence: {low_fence}\n')
+    X_[self.column] = X_[self.column].clip(lower = low_fence, upper=high_fence)
+
+    return X_
+
+  def fit(self, X, y = None):
+    print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
+    return X
+
+  def fit_transform(self, X, y = None):
+    X_ = self.transform(X)
+    return X_
