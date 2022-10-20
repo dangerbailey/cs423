@@ -238,3 +238,28 @@ class TukeyTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y = None):
     X_ = self.transform(X)
     return X_
+
+class MinMaxTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self):
+    pass  #takes no arguments
+
+  def transform(self, X):
+    X_ = X.copy()
+    columns = X_.columns
+
+    for col in columns:
+      mi = X_[col].min()
+      ma = X_[col].max()
+      denom = (ma-mi)
+      X_[col] -= mi
+      X_[col] /= denom
+
+    return X_
+
+  def fit(self, X, y=None):
+    return X
+
+  def fit_transform(self, X, y=None):
+    
+    X_ = self.transform(X)
+    return X_
