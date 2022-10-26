@@ -264,7 +264,7 @@ class MinMaxTransformer(BaseEstimator, TransformerMixin):
     X_ = self.transform(X)
     return X_
   
- class KNNTransformer(BaseEstimator, TransformerMixin):
+class KNNTransformer(BaseEstimator, TransformerMixin):
   def __init__(self,n_neighbors = 5, weights = "uniform"):
     self.n_neighbors = n_neighbors
     assert weights in ["uniform", "distance"], f'{self.__class__.__name__} action {weights} not in ["uniform", "distance"]'
