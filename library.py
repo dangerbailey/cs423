@@ -265,25 +265,25 @@ class MinMaxTransformer(BaseEstimator, TransformerMixin):
     return X_
   
  class KNNTransformer(BaseEstimator, TransformerMixin):
-  def __init__(self,n_neighbors = 5, weights = "uniform"):
-    self.n_neighbors = n_neighbors
-    assert weights in ["uniform", "distance"], f'{self.__class__.__name__} action {weights} not in ["uniform", "distance"]'
-    self.weights = weights
+   def __init__(self,n_neighbors = 5, weights = "uniform"):
+     self.n_neighbors = n_neighbors
+     assert weights in ["uniform", "distance"], f'{self.__class__.__name__} action {weights} not in ["uniform", "distance"]'
+     self.weights = weights
 
-  def fit(self, X, y=None):
-    print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
-    return X
+   def fit(self, X, y=None):
+     print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
+     return X
 
-  def transform(self, X):
-    # X_ = X.copy()
-    imputer = KNNImputer(n_neighbors=5,        #a rough guess
+   def transform(self, X):
+     # X_ = X.copy()
+     imputer = KNNImputer(n_neighbors=5,        #a rough guess
                      weights="uniform", add_indicator=False)
-    # by default this returns a copy of the input df
-    columns = X.columns
-    imputed_data = imputer.fit_transform(X)
-    X_ = pd.DataFrame(imputed_data, columns = columns)
-    return X_
+     # by default this returns a copy of the input df
+     columns = X.columns
+     imputed_data = imputer.fit_transform(X)
+     X_ = pd.DataFrame(imputed_data, columns = columns)
+     return X_
 
-  def fit_transform(self, X, y=None):
-    X_ = self.transform(X)
-    return X_
+   def fit_transform(self, X, y=None):
+     X_ = self.transform(X)
+     return X_
