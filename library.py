@@ -276,11 +276,11 @@ class KNNImputer(BaseEstimator, TransformerMixin):
 
   def transform(self, X):
     # X_ = X.copy()
-    imputer = KNNImputer(n_neighbors=5,
+    self.imputer = KNNImputer(n_neighbors=5,
                      weights="uniform")
     # by default this returns a copy of the input df
     columns = X.columns
-    imputed_data = imputer.fit_transform(X)
+    imputed_data = self.imputer.fit_transform(X)
     X_ = pd.DataFrame(imputed_data, columns = columns)
     return X_
 
