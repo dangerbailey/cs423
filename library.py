@@ -276,8 +276,8 @@ class KNNImputer(BaseEstimator, TransformerMixin):
 
   def transform(self, X):
     # X_ = X.copy()
-    imputer = KNNImputer(n_neighbors=5,        #a rough guess
-                     weights="uniform", add_indicator=False)
+    imputer = KNNImputer(n_neighbors=5,
+                     weights="uniform")
     # by default this returns a copy of the input df
     columns = X.columns
     imputed_data = imputer.fit_transform(X)
