@@ -6,6 +6,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
 from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
 
 #This class maps values in a column, numeric or categorical.
 class MappingTransformer(BaseEstimator, TransformerMixin):
