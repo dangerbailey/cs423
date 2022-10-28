@@ -264,7 +264,7 @@ class MinMaxTransformer(BaseEstimator, TransformerMixin):
     X_ = self.transform(X)
     return X_
   
-class KNNImputer(BaseEstimator, TransformerMixin):
+class KNNTransformer(BaseEstimator, TransformerMixin):
   def __init__(self,n_neighbors = 5, weights = "uniform"):
     self.n_neighbors = n_neighbors
     assert weights in ["uniform", "distance"], f'{self.__class__.__name__} action {weights} not in ["uniform", "distance"]'
@@ -276,11 +276,11 @@ class KNNImputer(BaseEstimator, TransformerMixin):
 
   def transform(self, X):
     # X_ = X.copy()
-    self.imputer = KNNImputer(n_neighbors=5,
-                     weights="uniform")
+    imputer = KNNImputer(n_neighbors=5,        #a rough guess
+                     weights="uniform", add_indicator=False)
     # by default this returns a copy of the input df
     columns = X.columns
-    imputed_data = self.imputer.fit_transform(X)
+    imputed_data = imputer.fit_transform(X)
     X_ = pd.DataFrame(imputed_data, columns = columns)
     return X_
 
