@@ -293,6 +293,7 @@ class KNNTransformer(BaseEstimator, TransformerMixin):
     return X_
   
 def find_random_state(df, labels, n = 200):
+  var = []
   model = KNeighborsClassifier(n_neighbors=5)
   for i in range(1, n):
     train_X, test_X, train_y, test_y = train_test_split(df, labels, test_size=0.2, shuffle=True,
