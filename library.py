@@ -4,6 +4,8 @@ from joblib.logger import pprint
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
+from sklearn.metrics import f1_score
+from sklearn.neighbors import KNeighborsClassifier
 
 #This class maps values in a column, numeric or categorical.
 class MappingTransformer(BaseEstimator, TransformerMixin):
