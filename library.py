@@ -310,3 +310,54 @@ def find_random_state(df, labels, n = 200):
   rs_value 
   idx = np.array(abs(var - rs_value)).argmin()  #find the index of the smallest value
   return idx
+
+############ General Purpose Data Setup Funciton ###############
+def dataset_setup(full_table, label_column_name:str, the_transformer, rs, ts=.2):
+  #your code below
+  table_features = full_table.drop(columns=label_column_name)
+  labels = full_table[label_column_name].to_list()
+  X_train, X_test, y_train, y_test = train_test_split(table_features, labels, test_size=ts, shuffle=True,
+                                                    random_state=rs, stratify=labels)
+  
+  X_train_transformed = the_transformer.fit_transform(X_train)
+  X_test_transformed = the_transformer.fit_transform(X_test)
+
+  X_trained_numpy = X_train_transformed.to_numpy()
+  X_test_numpy = X_test_transformed.to_numpy()
+  y_train_numpy = np.array(y_train)
+  y_test_numpy = np.array(y_test)
+  return X_trained_numpy, X_test_numpy, y_train_numpy, y_test_numpy
+
+############# Pipeline Transformers Specific to Datasets ################
+titanic_transformer = Pipeline(steps=[
+    ('drop', DropColumnsTransformer(['Age', 'Gender', 'Class', 'Joined', 'Married',  'Fare'], 'keep')),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    ('ohe', OHETransformer(target_column='Joined')),
+    ('age', TukeyTransformer(target_column='Age', fence='outer')), #from chapter 4
+    ('fare', TukeyTransformer(target_column='Fare', fence='outer')), #from chapter 4
+    ('minmax', MinMaxTransformer()),  #from chapter 5
+    ('imputer', KNNTransformer())  #from chapter 6
+    ], verbose=True)
+
+customer_transformer = Pipeline(steps=[
+    ('id', DropColumnsTransformer(column_list=['ID'])),  #you may need to add an action if you have no default
+    ('os', OHETransformer(target_column='OS')),
+    ('isp', OHETransformer(target_column='ISP')),
+    ('level', MappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high':2})),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('time spent', TukeyTransformer('Time Spent', 'inner')),
+    ('minmax', MinMaxTransformer()),
+    ('imputer', KNNTransformer())
+    ], verbose=True)
+
+############## Specific Data Setup incluing Specific Pipelines ##################
+# Titanic
+def titanic_setup(titanic_table, transformer=titanic_transformer, rs=40, ts=.2):
+  return dataset_setup(titanic_table, 'Survived', titanic_transformer, rs, ts=ts)
+
+# Customer
+def customer_setup(customer_table, transformer=customer_transformer, rs=76, ts=.2):
+  return dataset_setup(customer_table, 'Rating', customer_transformer, rs, ts=ts)
+
+
