@@ -3,6 +3,7 @@ import numpy as np
 from joblib.logger import pprint
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import KNNImputer
 from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -248,15 +249,10 @@ class MinMaxTransformer(BaseEstimator, TransformerMixin):
     pass  #takes no arguments
 
   def transform(self, X):
-    X_ = X.copy()
-    columns = X_.columns
-
-    for col in columns:
-      mi = X_[col].min()
-      ma = X_[col].max()
-      denom = (ma-mi)
-      X_[col] -= mi
-      X_[col] /= denom
+    columns = X.columns
+    scaler = MinMaxScaler()
+    numpy_result = scaler.fit_transform(X)
+    X_ = pd.DataFrame(numpy_result, columns = columns)
 
     return X_
 
