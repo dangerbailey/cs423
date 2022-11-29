@@ -334,7 +334,7 @@ titanic_transformer = Pipeline(steps=[
     ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
     ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
     ('ohe', OHETransformer(target_column='Joined')),
-    ('age', TukeyTransformer(column='Age', fence='outer')), #from chapter 4
+    ('age', TukeyTransformer(column='Age', action='outer')), #from chapter 4
     ('fare', TukeyTransformer(target_column='Fare', fence='outer')), #from chapter 4
     ('minmax', MinMaxTransformer()),  #from chapter 5
     ('imputer', KNNTransformer())  #from chapter 6
