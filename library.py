@@ -8,6 +8,7 @@ from sklearn.impute import KNNImputer
 from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 #This class maps values in a column, numeric or categorical.
 class MappingTransformer(BaseEstimator, TransformerMixin):
@@ -356,4 +357,29 @@ def titanic_setup(titanic_table, transformer=titanic_transformer, rs=40, ts=.2):
 def customer_setup(customer_table, transformer=customer_transformer, rs=76, ts=.2):
   return dataset_setup(customer_table, 'Rating', customer_transformer, rs, ts=ts)
 
+########### Chapter 10 Threshold Results Function ################
+def threshold_results(thresh_list, actuals, predicted):
+  result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy', 'Steve_Score'])
+  for t in thresh_list:
+    yhat = [1 if v >=t else 0 for v in predicted]
+    #note: where TP=0, the Precision and Recall both become 0
+    precision = precision_score(actuals, yhat, zero_division=0)
+    recall = recall_score(actuals, yhat, zero_division=0)
+    f1 = f1_score(actuals, yhat)
+    accuracy = accuracy_score(actuals, yhat)
+    steve_score = (precision+recall+f1+accuracy)/4
+    result_df.loc[len(result_df)] = {'threshold':t, 'precision':precision, 'recall':recall, 'f1':f1, 'accuracy':accuracy, 'Steve_Score':steve_score}
+
+  result_df = result_df.round(2)
+
+  #Next bit fancies up table for printing. See https://betterdatascience.com/style-pandas-dataframes/
+  #Note that fancy_df is not really a dataframe. More like a printable object.
+  headers = {
+    "selector": "th:not(.index_name)",
+    "props": "background-color: #800000; color: white; text-align: center"
+  }
+  properties = {"border": "1px solid black", "width": "65px", "text-align": "center"}
+
+  fancy_df = result_df.style.format(precision=2).set_properties(**properties).set_table_styles([headers])
+  return (result_df, fancy_df)
 
