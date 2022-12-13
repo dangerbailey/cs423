@@ -311,7 +311,7 @@ def find_random_state(df, labels, n = 200):
   return idx
 
 ############ General Purpose Data Setup Funciton ###############
-def dataset_setup(full_table, label_column_name:str, the_transformer, rs, ts=.4):
+def dataset_setup(full_table, label_column_name:str, the_transformer, rs, ts=.1):
   #your code below
   table_features = full_table.drop(columns=label_column_name)
   labels = full_table[label_column_name].to_list()
