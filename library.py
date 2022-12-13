@@ -404,6 +404,10 @@ def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
 
 ############ Final Project Wrangling ################
 
+ratings = ["INV", "UTR", "MOR", "CP", "OTT"]
+tones = ["PP", "P", "M", "N", "NN"] #note: neutral is marked with no tone indicator
+visibility = ['1','2','3','4','5']
+
 def convert_entry(entry):
   parts = []
   for rating in ratings:
@@ -429,12 +433,7 @@ def convert_entry(entry):
 
 class EdgicTransformer(BaseEstimator, TransformerMixin):
   
-  def __init__(self, ratings = ["INV", "UTR", "MOR", "CP", "OTT"], 
-               tones = ["PP", "P", "M", "N", "NN"], #note: neutral is marked with no tone indicator
-               visibility = ['1','2','3','4','5']):
-    self.ratings = ratings
-    self.tones = tones
-    self.visibility = visibility
+  def __init__(self):
 
   def fit(self, X, y = None):
     print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
