@@ -534,7 +534,7 @@ class EdgicTransformer(BaseEstimator, TransformerMixin):
     return result
 
 
-wrangle_edgic(raw_edgic_df):
+def wrangle_edgic(raw_edgic_df):
   edgic_df = pd.DataFrame(columns=["Name", "INV_count", "UTR_count", 
                 "UTR_vsum", "MOR_count", "MOR_vsum", "CP_count", "CP_vsum", 
                 "OTT_count", "OTT_vsum", "PP_count", "PP_vsum", "P_count", 
