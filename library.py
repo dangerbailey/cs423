@@ -403,6 +403,10 @@ def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
   return grid_result
 
 ############ Final Project Wrangling ################
+ratings = ["INV", "UTR", "MOR", "CP", "OTT"]
+tones = ["PP", "P", "M", "N", "NN"] #note: neutral is marked with no tone indicator
+visibility = ['1','2','3','4','5']
+
 def convert_entry(entry):
   parts = []
   for rating in ratings:
@@ -427,9 +431,6 @@ def convert_entry(entry):
   return parts
 
 def wrangle_edgic(raw_edgic_df):
-  ratings = ["INV", "UTR", "MOR", "CP", "OTT"]
-  tones = ["PP", "P", "M", "N", "NN"] #note: neutral is marked with no tone indicator
-  visibility = ['1','2','3','4','5']
 
   edgic_df = pd.DataFrame(columns=["Name", "INV_count", "UTR_count", 
                   "UTR_vsum", "MOR_count", "MOR_vsum", "CP_count", "CP_vsum", 
@@ -437,7 +438,6 @@ def wrangle_edgic(raw_edgic_df):
                   "P_vsum", "Neutral_count", "Neutral_vsum", "M_count", "M_vsum", 
                   "N_count", "N_vsum", "NN_count", "NN_vsum", "Visibility_Sum", 
                   "Visibility_Mean", "Tone_Sum", "Tone_Mean", "Win"])
-
 
   edgic_df['Name'] = raw_edgic_df["Name"]
   # edgic_df.set_index("Name", inplace=True)
