@@ -434,6 +434,7 @@ def convert_entry(entry):
 class EdgicTransformer(BaseEstimator, TransformerMixin):
   
   def __init__(self):
+    pass
 
   def fit(self, X, y = None):
     print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
