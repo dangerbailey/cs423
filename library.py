@@ -426,7 +426,7 @@ def convert_entry(entry):
 
   return parts
 
-def wrangle_edgic(raw_edgic_df)
+def wrangle_edgic(raw_edgic_df):
   ratings = ["INV", "UTR", "MOR", "CP", "OTT"]
   tones = ["PP", "P", "M", "N", "NN"] #note: neutral is marked with no tone indicator
   visibility = ['1','2','3','4','5']
