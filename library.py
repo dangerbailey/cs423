@@ -402,3 +402,121 @@ def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
   grid_result = halving_cv.fit(x_train, y_train)
   return grid_result
 
+############ Final Project Wrangling ################
+def convert_entry(entry):
+  parts = []
+  for rating in ratings:
+    if entry.__contains__(rating):
+      parts.append(rating)
+      entry = entry.replace(rating, "")
+  for tone in tones:
+    if entry.__contains__(tone):
+      parts.append(tone)
+      entry = entry.replace(tone, "")
+
+  # if there is not a tone rating it is neutral
+  if len(parts) == 1:
+    parts.append("Neutral")
+
+  for vis in visibility:
+    if entry.__contains__(vis):
+      parts.append(vis)
+  if len(parts) == 2:
+    parts.append("0")
+
+  return parts
+
+def wrangle_edgic(raw_edgic_df)
+  ratings = ["INV", "UTR", "MOR", "CP", "OTT"]
+  tones = ["PP", "P", "M", "N", "NN"] #note: neutral is marked with no tone indicator
+  visibility = ['1','2','3','4','5']
+
+  edgic_df = pd.DataFrame(columns=["Name", "INV_count", "UTR_count", 
+                  "UTR_vsum", "MOR_count", "MOR_vsum", "CP_count", "CP_vsum", 
+                  "OTT_count", "OTT_vsum", "PP_count", "PP_vsum", "P_count", 
+                  "P_vsum", "Neutral_count", "Neutral_vsum", "M_count", "M_vsum", 
+                  "N_count", "N_vsum", "NN_count", "NN_vsum", "Visibility_Sum", 
+                  "Visibility_Mean", "Tone_Sum", "Tone_Mean", "Win"])
+
+
+  edgic_df['Name'] = raw_edgic_df["Name"]
+  # edgic_df.set_index("Name", inplace=True)
+  # edgic_df["Win"] = raw_edgic_df["Win"]
+  edgic_df = edgic_df.fillna(0)
+
+  for i in range(0, len(raw_edgic_df)):
+
+    row = raw_edgic_df.iloc[i]
+    # print(row)
+    row_dict = {"Name": row[0],
+                "Win": row[15]}
+    name = row[15]
+    ecount = 0
+    col_list = []
+    for e in row:
+      if ecount != 0:
+        if ecount != 15:
+          e_conv = convert_entry(e)
+          keys = row_dict.keys()
+          rating_count_label = e_conv[0] + "_count"
+          rating_vsum_label = e_conv[0] + "_vsum"
+          tone_count_label = e_conv[1] + "_count"
+          tone_vsum_label = e_conv[1] + "_vsum"
+
+          vis = int(e_conv[2])
+
+          # Rating
+
+          if rating_count_label in keys:
+            row_dict[rating_count_label] = row_dict[rating_count_label] + 1
+          else:
+            row_dict[rating_count_label] = 1
+            col_list.append(rating_count_label)
+
+          if rating_vsum_label != "INV_vsum":
+            if rating_vsum_label in keys:
+              row_dict[rating_vsum_label] = row_dict[rating_vsum_label] + vis
+            else:
+              row_dict[rating_vsum_label] = vis
+              col_list.append(rating_vsum_label)
+
+
+          # Tone
+
+          if tone_count_label in keys:
+            row_dict[tone_count_label] = row_dict[tone_count_label] + 1
+          else:
+            row_dict[tone_count_label] = 1
+            col_list.append(tone_count_label)
+
+          if tone_vsum_label in keys:
+            row_dict[tone_vsum_label] = row_dict[tone_vsum_label] + vis
+          else:
+            row_dict[tone_vsum_label] = vis
+            col_list.append(tone_vsum_label)
+
+          # Visibility
+
+          if "Visibility_Sum" in keys:
+            row_dict["Visibility_Sum"] = row_dict["Visibility_Sum"] + vis
+          else:
+            row_dict["Visibility_Sum"] = vis
+
+      ecount = ecount + 1
+
+    # print(row_dict)
+    for col in col_list:
+      # print(col)
+      edgic_df.loc[i, col] = row_dict[col]
+    # edgic_df.loc[i, rating_vsum_label] = row_dict[rating_vsum_label]
+    # edgic_df.loc[i, tone_count_label] = row_dict[tone_count_label]
+    # edgic_df.loc[i, tone_vsum_label] = row_dict[tone_vsum_label]
+    tone_sum = edgic_df.loc[i, "PP_count"]*6 + edgic_df.loc[i, "P_count"]*5 + edgic_df.loc[i, "Neutral_count"]*4 + edgic_df.loc[i, "M_count"]*3 + edgic_df.loc[i, "N_count"]*2 + edgic_df.loc[i, "NN_count"]*1
+    edgic_df.loc[i, "Tone_Sum"] = tone_sum
+    edgic_df.loc[i, "Tone_Mean"] = tone_sum/14
+    edgic_df.loc[i, "Visibility_Sum"] = row_dict["Visibility_Sum"]
+    edgic_df.loc[i, "Visibility_Mean"] = row_dict["Visibility_Sum"]/14
+    edgic_df.loc[i, "Win"] = row_dict["Win"]
+
+  return edgic_df
+
