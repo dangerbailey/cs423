@@ -543,82 +543,80 @@ def wrangle_edgic(raw_edgic_df):
                 "Visibility_Mean", "Tone_Sum", "Tone_Mean", "Win"])
 
 
-    edgic_df['Name'] = raw_edgic_df["Name"]
+  edgic_df['Name'] = raw_edgic_df["Name"]
 
-    edgic_df = edgic_df.fillna(0)
+  edgic_df = edgic_df.fillna(0)
 
-    for i in range(0, len(raw_edgic_df)):
+  for i in range(0, len(raw_edgic_df)):
 
-      row = raw_edgic_df.iloc[i]
-      # print(row)
-      row_dict = {"Name": row[0],
+    row = raw_edgic_df.iloc[i]
+    row_dict = {"Name": row[0],
                   "Win": row[15]}
-      name = row[15]
-      ecount = 0
-      col_list = []
-      for e in row:
-        if ecount != 0:
-          if ecount != 15:
-            e_conv = convert_entry(e)
-            keys = row_dict.keys()
-            rating_count_label = e_conv[0] + "_count"
-            rating_vsum_label = e_conv[0] + "_vsum"
-            tone_count_label = e_conv[1] + "_count"
-            tone_vsum_label = e_conv[1] + "_vsum"
+    name = row[15]
+    ecount = 0
+    col_list = []
+    for e in row:
+      if ecount != 0:
+        if ecount != 15:
+          e_conv = convert_entry(e)
+          keys = row_dict.keys()
+          rating_count_label = e_conv[0] + "_count"
+          rating_vsum_label = e_conv[0] + "_vsum"
+          tone_count_label = e_conv[1] + "_count"
+          tone_vsum_label = e_conv[1] + "_vsum"
 
-            vis = int(e_conv[2])
+          vis = int(e_conv[2])
 
             # Rating
 
-            if rating_count_label in keys:
-              row_dict[rating_count_label] = row_dict[rating_count_label] + 1
-            else:
-              row_dict[rating_count_label] = 1
-              col_list.append(rating_count_label)
+          if rating_count_label in keys:
+            row_dict[rating_count_label] = row_dict[rating_count_label] + 1
+          else:
+            row_dict[rating_count_label] = 1
+            col_list.append(rating_count_label)
 
-            if rating_vsum_label != "INV_vsum":
-              if rating_vsum_label in keys:
-                row_dict[rating_vsum_label] = row_dict[rating_vsum_label] + vis
-              else:
-                row_dict[rating_vsum_label] = vis
-                col_list.append(rating_vsum_label)
+          if rating_vsum_label != "INV_vsum":
+            if rating_vsum_label in keys:
+              row_dict[rating_vsum_label] = row_dict[rating_vsum_label] + vis
+            else:
+              row_dict[rating_vsum_label] = vis
+              col_list.append(rating_vsum_label)
 
 
             # Tone
+          if tone_count_label in keys:
+            row_dict[tone_count_label] = row_dict[tone_count_label] + 1
+          else:
+            row_dict[tone_count_label] = 1
+            col_list.append(tone_count_label)
 
-            if tone_count_label in keys:
-              row_dict[tone_count_label] = row_dict[tone_count_label] + 1
-            else:
-              row_dict[tone_count_label] = 1
-              col_list.append(tone_count_label)
-
-            if tone_vsum_label in keys:
-              row_dict[tone_vsum_label] = row_dict[tone_vsum_label] + vis
-            else:
-              row_dict[tone_vsum_label] = vis
-              col_list.append(tone_vsum_label)
+          if tone_vsum_label in keys:
+            row_dict[tone_vsum_label] = row_dict[tone_vsum_label] + vis
+          else:
+            row_dict[tone_vsum_label] = vis
+            col_list.append(tone_vsum_label)
             
             # Visibility
 
-            if "Visibility_Sum" in keys:
-              row_dict["Visibility_Sum"] = row_dict["Visibility_Sum"] + vis
-            else:
-              row_dict["Visibility_Sum"] = vis
+          if "Visibility_Sum" in keys:
+            row_dict["Visibility_Sum"] = row_dict["Visibility_Sum"] + vis
+          else:
+            row_dict["Visibility_Sum"] = vis
         
-        ecount = ecount + 1
+      ecount = ecount + 1
 
       # print(row_dict)
-      for col in col_list:
+    for col in col_list:
         # print(col)
-        edgic_df.loc[i, col] = row_dict[col]
+      edgic_df.loc[i, col] = row_dict[col]
       # edgic_df.loc[i, rating_vsum_label] = row_dict[rating_vsum_label]
       # edgic_df.loc[i, tone_count_label] = row_dict[tone_count_label]
       # edgic_df.loc[i, tone_vsum_label] = row_dict[tone_vsum_label]
-      tone_sum = edgic_df.loc[i, "PP_count"]*6 + edgic_df.loc[i, "P_count"]*5 + edgic_df.loc[i, "Neutral_count"]*4 + edgic_df.loc[i, "M_count"]*3 + edgic_df.loc[i, "N_count"]*2 + edgic_df.loc[i, "NN_count"]*1
-      edgic_df.loc[i, "Tone_Sum"] = tone_sum
-      edgic_df.loc[i, "Tone_Mean"] = tone_sum/14
-      edgic_df.loc[i, "Visibility_Sum"] = row_dict["Visibility_Sum"]
-      edgic_df.loc[i, "Visibility_Mean"] = row_dict["Visibility_Sum"]/14
-      edgic_df.loc[i, "Win"] = row_dict["Win"]
+    tone_sum = edgic_df.loc[i, "PP_count"]*6 + edgic_df.loc[i, "P_count"]*5 + edgic_df.loc[i, "Neutral_count"]*4 + edgic_df.loc[i, "M_count"]*3 + edgic_df.loc[i, "N_count"]*2 + edgic_df.loc[i, "NN_count"]*1
+    edgic_df.loc[i, "Tone_Sum"] = tone_sum
+    edgic_df.loc[i, "Tone_Mean"] = tone_sum/14
+    edgic_df.loc[i, "Visibility_Sum"] = row_dict["Visibility_Sum"]
+    edgic_df.loc[i, "Visibility_Mean"] = row_dict["Visibility_Sum"]/14
+    edgic_df.loc[i, "Win"] = row_dict["Win"]
 
-      return edgic_df
+    return edgic_df
